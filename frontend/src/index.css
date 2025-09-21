@@ -1,0 +1,69 @@
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/fira-code/400.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-[#222222] text-[#AAAAAA];
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  code,
+  pre {
+    font-family: 'Fira Code', monospace;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#BFFF00] text-[#222222] px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+  }
+
+  .btn-secondary {
+    @apply bg-[#525252] text-[#AAAAAA] px-4 py-2 rounded-md hover:bg-[#656565] transition-colors;
+    font-family: Inter, sans-serif;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors;
+    font-family: Inter, sans-serif;
+  }
+
+  .card {
+    @apply bg-[#494949] border border-[#656565] rounded-lg shadow-lg;
+  }
+
+  .input-field {
+    @apply bg-[#525252] border border-[#656565] text-[#AAAAAA] placeholder-[#AAAAAA] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#BFFF00] focus:border-transparent;
+  }
+
+  .label {
+    @apply block text-sm text-[#AAAAAA] mb-2;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+  }
+}

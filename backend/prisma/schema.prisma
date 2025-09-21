@@ -51,7 +51,7 @@ model MataKuliah {
 
 model Kelas {
   id        Int     @id @default(autoincrement())
-  namaKelas String
+  namaKelas String  @unique
   angkatan  Int
 
   prodi     Prodi   @relation(fields: [prodiId], references: [id])
@@ -62,7 +62,7 @@ model Kelas {
 
 model Ruangan {
   id        Int     @id @default(autoincrement())
-  nama      String
+  nama      String  @unique
   kapasitas Int
   lokasi    String?
 

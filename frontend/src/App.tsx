@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './src/contexts/AuthContext';
-import LoginPage from './src/pages/LoginPage';
-import UserDashboard from './src/pages/UserDashboard';
-import UserForm from './src/components/UserForm';
-import BulkCreateUsers from './src/components/BulkCreateUsers';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginPage from './pages/LoginPage';
+import UserDashboard from './pages/UserDashboard';
+import UserForm from './components/UserForm';
+import BulkCreateUsers from './components/BulkCreateUsers';
+import './App.css';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -12,8 +13,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#222222]">
-        <div className="text-lg text-[#AAAAAA]" style={{ fontFamily: "'Inter', sans-serif" }}>Loading...</div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
       </div>
     );
   }
@@ -63,7 +64,7 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+function App() {
   return (
     <AuthProvider>
       <Router>
@@ -73,6 +74,6 @@ const App: React.FC = () => {
       </Router>
     </AuthProvider>
   );
-};
+}
 
 export default App;
