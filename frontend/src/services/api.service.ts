@@ -10,6 +10,31 @@ const api = axios.create({
     },
 });
 
+export interface CreateJadwalDto {
+    hari: string;
+    jamMulai: string;
+    jamSelesai: string;
+    mataKuliahId: number;
+    dosenId: number;
+    kelasId: number;
+    ruanganId: number;
+}
+
+export interface UpdateJadwalDto {
+    hari?: string;
+    jamMulai?: string;
+    jamSelesai?: string;
+    mataKuliahId?: number;
+    dosenId?: number;
+    kelasId?: number;
+    ruanganId?: number;
+} axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
 // Request interceptor to add auth token
 api.interceptors.request.use(
     (config) => {
@@ -177,6 +202,26 @@ export interface UpdateRuanganDto {
     lokasi?: string;
 }
 
+export interface CreateJadwalDto {
+    hari: string;
+    jamMulai: string;
+    jamSelesai: string;
+    mataKuliahId: number;
+    dosenId: number;
+    kelasId: number;
+    ruanganId: number;
+}
+
+export interface UpdateJadwalDto {
+    hari?: string;
+    jamMulai?: string;
+    jamSelesai?: string;
+    mataKuliahId?: number;
+    dosenId?: number;
+    kelasId?: number;
+    ruanganId?: number;
+}
+
 export interface LoginDto {
     email: string;
     password: string;
@@ -310,6 +355,34 @@ export const ruanganAPI = {
 
     delete: async (id: number): Promise<Ruangan> => {
         const response = await api.delete(`/ruangan/${id}`);
+        return response.data;
+    },
+};
+
+// Jadwal API
+export const jadwalAPI = {
+    create: async (jadwalData: CreateJadwalDto): Promise<Jadwal> => {
+        const response = await api.post('/jadwal', jadwalData);
+        return response.data;
+    },
+
+    findAll: async (): Promise<Jadwal[]> => {
+        const response = await api.get('/jadwal');
+        return response.data;
+    },
+
+    findOne: async (id: number): Promise<Jadwal> => {
+        const response = await api.get(`/jadwal/${id}`);
+        return response.data;
+    },
+
+    update: async (id: number, jadwalData: UpdateJadwalDto): Promise<Jadwal> => {
+        const response = await api.put(`/jadwal/${id}`, jadwalData);
+        return response.data;
+    },
+
+    delete: async (id: number): Promise<Jadwal> => {
+        const response = await api.delete(`/jadwal/${id}`);
         return response.data;
     },
 };

@@ -102,6 +102,13 @@ const UserDashboard: React.FC = () => {
                 >
                   Ruangan
                 </button>
+                <button
+                  onClick={() => navigate('/jadwal')}
+                  className="bg-indigo-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Jadwal
+                </button>
               </div>
               <button
                 onClick={handleLogout}

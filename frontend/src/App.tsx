@@ -13,6 +13,7 @@ import KelasDashboard from './pages/KelasDashboard';
 import KelasForm from './components/KelasForm';
 import RuanganDashboard from './pages/RuanganDashboard';
 import RuanganForm from './components/RuanganForm';
+import JadwalDashboard from './pages/JadwalDashboard';
 import NotFound from './pages/NotFound';
 
 // Protected Route component
@@ -160,6 +161,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <RuanganForm isEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/jadwal"
+        element={
+          <ProtectedRoute>
+            <JadwalDashboard />
           </ProtectedRoute>
         }
       />

@@ -4,8 +4,8 @@ import { JadwalController } from './jadwal.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  controllers: [JadwalController],
-  providers: [JadwalService],
-  imports: [PrismaModule],
+    controllers: [JadwalController],
+    providers: [JadwalService],
+    imports: [PrismaModule],
 })
-export class JadwalModule {}
+export class JadwalModule { }
