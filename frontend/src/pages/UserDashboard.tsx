@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usersAPI, User } from '../services/api.service';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,6 +8,7 @@ const UserDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -55,22 +57,52 @@ const UserDashboard: React.FC = () => {
       <div className="bg-[#494949] shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <h1 className="text-3xl font-bold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>User Management</h1>
+            <h1 className="text-3xl font-bold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>Management Dashboard</h1>
             <div className="flex space-x-4">
               <button
-                onClick={() => window.location.href = '/users/create'}
+                onClick={() => navigate('/users/create')}
                 className="bg-[#BFFF00] text-[#222222] font-semibold px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Add User
               </button>
               <button
-                onClick={() => window.location.href = '/users/bulk-create'}
+                onClick={() => navigate('/users/bulk-create')}
                 className="bg-[#656565] text-[#AAAAAA] font-semibold px-4 py-2 rounded-md hover:bg-[#525252] transition-colors"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
                 Bulk Create
               </button>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => navigate('/prodi')}
+                  className="bg-blue-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Prodi
+                </button>
+                <button
+                  onClick={() => navigate('/mata-kuliah')}
+                  className="bg-green-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Mata Kuliah
+                </button>
+                <button
+                  onClick={() => navigate('/kelas')}
+                  className="bg-purple-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Kelas
+                </button>
+                <button
+                  onClick={() => navigate('/ruangan')}
+                  className="bg-orange-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Ruangan
+                </button>
+              </div>
               <button
                 onClick={handleLogout}
                 className="bg-red-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
@@ -95,6 +127,9 @@ const UserDashboard: React.FC = () => {
 
         {/* Users List */}
         <div className="bg-[#494949] shadow overflow-hidden sm:rounded-md">
+          <div className="px-4 py-4 sm:px-6 border-b border-[#656565]">
+            <h2 className="text-xl font-semibold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>Users</h2>
+          </div>
           <ul className="divide-y divide-[#656565]">
             {users.map((user) => (
               <li key={user.id}>
@@ -115,15 +150,14 @@ const UserDashboard: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-4">
                       <div className="text-sm text-[#AAAAAA]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.role === 'ADMIN'
-                            ? 'bg-red-900 text-red-200'
-                            : user.role === 'DOSEN'
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'ADMIN'
+                          ? 'bg-red-900 text-red-200'
+                          : user.role === 'DOSEN'
                             ? 'bg-blue-900 text-blue-200'
                             : user.role === 'MAHASISWA'
-                            ? 'bg-green-900 text-green-200'
-                            : 'bg-yellow-900 text-yellow-200'
-                        }`}>
+                              ? 'bg-green-900 text-green-200'
+                              : 'bg-yellow-900 text-yellow-200'
+                          }`}>
                           {user.role}
                         </span>
                       </div>
@@ -134,7 +168,7 @@ const UserDashboard: React.FC = () => {
                       </div>
                       <div className="flex space-x-2">
                         <button
-                          onClick={() => window.location.href = `/users/edit/${user.id}`}
+                          onClick={() => navigate(`/users/edit/${user.id}`)}
                           className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                         >
@@ -156,7 +190,7 @@ const UserDashboard: React.FC = () => {
           </ul>
           {users.length === 0 && (
             <div className="text-center py-8 text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>
-              No users found. <a href="/users/create" className="text-[#BFFF00] hover:underline">Create your first user</a>
+              No users found. <button onClick={() => navigate('/users/create')} className="text-[#BFFF00] hover:underline">Create your first user</button>
             </div>
           )}
         </div>

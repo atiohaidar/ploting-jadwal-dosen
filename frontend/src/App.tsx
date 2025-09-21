@@ -5,6 +5,14 @@ import LoginPage from './pages/LoginPage';
 import UserDashboard from './pages/UserDashboard';
 import UserForm from './components/UserForm';
 import BulkCreateUsers from './components/BulkCreateUsers';
+import ProdiDashboard from './pages/ProdiDashboard';
+import ProdiForm from './components/ProdiForm';
+import MataKuliahDashboard from './pages/MataKuliahDashboard';
+import MataKuliahForm from './components/MataKuliahForm';
+import KelasDashboard from './pages/KelasDashboard';
+import KelasForm from './components/KelasForm';
+import RuanganDashboard from './pages/RuanganDashboard';
+import RuanganForm from './components/RuanganForm';
 import './App.css';
 
 // Protected Route component
@@ -56,6 +64,102 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <BulkCreateUsers />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/prodi"
+        element={
+          <ProtectedRoute>
+            <ProdiDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/prodi/create"
+        element={
+          <ProtectedRoute>
+            <ProdiForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/prodi/edit/:id"
+        element={
+          <ProtectedRoute>
+            <ProdiForm isEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mata-kuliah"
+        element={
+          <ProtectedRoute>
+            <MataKuliahDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mata-kuliah/create"
+        element={
+          <ProtectedRoute>
+            <MataKuliahForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mata-kuliah/edit/:id"
+        element={
+          <ProtectedRoute>
+            <MataKuliahForm isEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/kelas"
+        element={
+          <ProtectedRoute>
+            <KelasDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/kelas/create"
+        element={
+          <ProtectedRoute>
+            <KelasForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/kelas/edit/:id"
+        element={
+          <ProtectedRoute>
+            <KelasForm isEdit />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ruangan"
+        element={
+          <ProtectedRoute>
+            <RuanganDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ruangan/create"
+        element={
+          <ProtectedRoute>
+            <RuanganForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ruangan/edit/:id"
+        element={
+          <ProtectedRoute>
+            <RuanganForm isEdit />
           </ProtectedRoute>
         }
       />

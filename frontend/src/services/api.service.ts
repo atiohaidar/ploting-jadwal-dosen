@@ -51,6 +51,67 @@ export interface User {
     };
 }
 
+export interface Prodi {
+    id: number;
+    namaProdi: string;
+    users: User[];
+    kelas: Kelas[];
+    mataKuliah: MataKuliah[];
+}
+
+export interface MataKuliah {
+    id: number;
+    kodeMk: string;
+    namaMk: string;
+    sks: number;
+    prodiId: number;
+    prodi: Prodi;
+    Jadwal: Jadwal[];
+}
+
+export interface Kelas {
+    id: number;
+    namaKelas: string;
+    angkatan: number;
+    prodiId: number;
+    prodi: Prodi;
+    Jadwal: Jadwal[];
+}
+
+export interface Ruangan {
+    id: number;
+    nama: string;
+    kapasitas: number;
+    lokasi?: string;
+    Jadwal: Jadwal[];
+}
+
+export interface Jadwal {
+    id: number;
+    hari: string;
+    jamMulai: Date;
+    jamSelesai: Date;
+    status: string;
+    mataKuliahId: number;
+    dosenId: number;
+    kelasId: number;
+    ruanganId: number;
+    mataKuliah: MataKuliah;
+    dosen: User;
+    kelas: Kelas;
+    ruangan: Ruangan;
+    PermintaanJadwal: PermintaanJadwal[];
+}
+
+export interface PermintaanJadwal {
+    id: number;
+    alasan: string;
+    tanggalPengajuan: Date;
+    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    jadwalId: number;
+    jadwal: Jadwal;
+}
+
 export interface CreateUserDto {
     name: string;
     email: string;
@@ -68,6 +129,52 @@ export interface UpdateUserDto {
     nip?: string;
     nim?: string;
     prodiId?: number;
+}
+
+export interface CreateProdiDto {
+    namaProdi: string;
+}
+
+export interface UpdateProdiDto {
+    namaProdi?: string;
+}
+
+export interface CreateMataKuliahDto {
+    kodeMk: string;
+    namaMk: string;
+    sks: number;
+    prodiId: number;
+}
+
+export interface UpdateMataKuliahDto {
+    kodeMk?: string;
+    namaMk?: string;
+    sks?: number;
+    prodiId?: number;
+}
+
+export interface CreateKelasDto {
+    namaKelas: string;
+    angkatan: number;
+    prodiId: number;
+}
+
+export interface UpdateKelasDto {
+    namaKelas?: string;
+    angkatan?: number;
+    prodiId?: number;
+}
+
+export interface CreateRuanganDto {
+    nama: string;
+    kapasitas: number;
+    lokasi?: string;
+}
+
+export interface UpdateRuanganDto {
+    nama?: string;
+    kapasitas?: number;
+    lokasi?: string;
 }
 
 export interface LoginDto {
@@ -111,6 +218,98 @@ export const usersAPI = {
 
     delete: async (id: number): Promise<User> => {
         const response = await api.delete(`/users/${id}`);
+        return response.data;
+    },
+};
+
+// Prodi API
+export const prodiAPI = {
+    create: async (prodiData: CreateProdiDto): Promise<Prodi> => {
+        const response = await api.post('/prodi', prodiData);
+        return response.data;
+    },
+
+    findAll: async (): Promise<Prodi[]> => {
+        const response = await api.get('/prodi');
+        return response.data;
+    },
+
+    update: async (id: number, prodiData: UpdateProdiDto): Promise<Prodi> => {
+        const response = await api.put(`/prodi/${id}`, prodiData);
+        return response.data;
+    },
+
+    delete: async (id: number): Promise<Prodi> => {
+        const response = await api.delete(`/prodi/${id}`);
+        return response.data;
+    },
+};
+
+// Mata Kuliah API
+export const mataKuliahAPI = {
+    create: async (mataKuliahData: CreateMataKuliahDto): Promise<MataKuliah> => {
+        const response = await api.post('/mata-kuliah', mataKuliahData);
+        return response.data;
+    },
+
+    findAll: async (): Promise<MataKuliah[]> => {
+        const response = await api.get('/mata-kuliah');
+        return response.data;
+    },
+
+    update: async (id: number, mataKuliahData: UpdateMataKuliahDto): Promise<MataKuliah> => {
+        const response = await api.put(`/mata-kuliah/${id}`, mataKuliahData);
+        return response.data;
+    },
+
+    delete: async (id: number): Promise<MataKuliah> => {
+        const response = await api.delete(`/mata-kuliah/${id}`);
+        return response.data;
+    },
+};
+
+// Kelas API
+export const kelasAPI = {
+    create: async (kelasData: CreateKelasDto): Promise<Kelas> => {
+        const response = await api.post('/kelas', kelasData);
+        return response.data;
+    },
+
+    findAll: async (): Promise<Kelas[]> => {
+        const response = await api.get('/kelas');
+        return response.data;
+    },
+
+    update: async (id: number, kelasData: UpdateKelasDto): Promise<Kelas> => {
+        const response = await api.put(`/kelas/${id}`, kelasData);
+        return response.data;
+    },
+
+    delete: async (id: number): Promise<Kelas> => {
+        const response = await api.delete(`/kelas/${id}`);
+        return response.data;
+    },
+};
+
+// Ruangan API
+export const ruanganAPI = {
+    create: async (ruanganData: CreateRuanganDto): Promise<Ruangan> => {
+        const response = await api.post('/ruangan', ruanganData);
+        return response.data;
+    },
+
+    findAll: async (): Promise<Ruangan[]> => {
+        const response = await api.get('/ruangan');
+        return response.data;
+    },
+
+    update: async (id: number, ruanganData: UpdateRuanganDto): Promise<Ruangan> => {
+        const response = await api.put(`/ruangan/${id}`, ruanganData);
+        return response.data;
+    },
+
+    delete: async (id: number): Promise<Ruangan> => {
+        const response = await api.delete(`/ruangan/${id}`);
         return response.data;
     },
 };
