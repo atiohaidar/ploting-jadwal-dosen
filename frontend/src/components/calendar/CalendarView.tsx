@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Jadwal, jadwalAPI } from '../../services/api.service';
 
 interface CalendarViewProps {
-  jadwalList: Jadwal[];
-  onJadwalClick?: (jadwal: Jadwal) => void;
-  onCreateJadwal?: (date: Date, timeSlot?: string) => void;
-  onDragCreateJadwal?: (dragData: { hari: string; jamMulai: string; jamSelesai: string }) => void;
+    jadwalList: Jadwal[];
+    onJadwalClick?: (jadwal: Jadwal) => void;
+    onCreateJadwal?: (date: Date, timeSlot?: string) => void;
+    onDragCreateJadwal?: (dragData: { hari: string; jamMulai: string; jamSelesai: string }) => void;
 }const CalendarView: React.FC<CalendarViewProps> = ({
-  jadwalList,
-  onJadwalClick,
-  onCreateJadwal,
-  onDragCreateJadwal
+    jadwalList,
+    onJadwalClick,
+    onCreateJadwal,
+    onDragCreateJadwal
 }) => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState<'week' | 'month'>('week');
@@ -59,11 +59,10 @@ interface CalendarViewProps {
 
     // Format time
     const formatTime = (date: Date): string => {
-        return date.toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
+        // Use UTC time since data is stored in UTC
+        const hours = date.getUTCHours().toString().padStart(2, '0');
+        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
     };
 
     // Calculate position for jadwal in timeline
@@ -71,8 +70,9 @@ interface CalendarViewProps {
         const startTime = new Date(jadwal.jamMulai);
         const endTime = new Date(jadwal.jamSelesai);
 
-        const startHour = startTime.getHours() + startTime.getMinutes() / 60;
-        const endHour = endTime.getHours() + endTime.getMinutes() / 60;
+        // Use UTC methods since data is stored in UTC
+        const startHour = startTime.getUTCHours() + startTime.getUTCMinutes() / 60;
+        const endHour = endTime.getUTCHours() + endTime.getUTCMinutes() / 60;
 
         const top = (startHour - 7) * 60; // Start from 7 AM
         const height = (endHour - startHour) * 60;
@@ -94,60 +94,60 @@ interface CalendarViewProps {
 
     const weekDates = getWeekDates(currentDate);
 
-  // Drag handlers
-  const handleMouseDown = (dayIndex: number, hourIndex: number, e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-    setDragStart({ dayIndex, hourIndex });
-    setDragEnd({ dayIndex, hourIndex });
-  };
+    // Drag handlers
+    const handleMouseDown = (dayIndex: number, hourIndex: number, e: React.MouseEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+        setDragStart({ dayIndex, hourIndex });
+        setDragEnd({ dayIndex, hourIndex });
+    };
 
-  const handleMouseEnter = (dayIndex: number, hourIndex: number) => {
-    if (isDragging && dragStart) {
-      setDragEnd({ dayIndex, hourIndex });
+    const handleMouseEnter = (dayIndex: number, hourIndex: number) => {
+        if (isDragging && dragStart) {
+            setDragEnd({ dayIndex, hourIndex });
 
-      // Calculate drag preview
-      const startHour = Math.min(dragStart.hourIndex, hourIndex);
-      const endHour = Math.max(dragStart.hourIndex, hourIndex) + 1; // +1 to include the end hour
+            // Calculate drag preview
+            const startHour = Math.min(dragStart.hourIndex, hourIndex);
+            const endHour = Math.max(dragStart.hourIndex, hourIndex) + 1; // +1 to include the end hour
 
-      if (dragStart.dayIndex === dayIndex) {
-        setDragPreview({
-          dayIndex,
-          startHour: 7 + startHour, // Convert to actual hour (7 AM base)
-          endHour: 7 + endHour
-        });
-      } else {
+            if (dragStart.dayIndex === dayIndex) {
+                setDragPreview({
+                    dayIndex,
+                    startHour: 7 + startHour, // Convert to actual hour (7 AM base)
+                    endHour: 7 + endHour
+                });
+            } else {
+                setDragPreview(null);
+            }
+        }
+    };
+
+    const handleMouseUp = () => {
+        if (isDragging && dragStart && dragEnd && dragPreview && onDragCreateJadwal) {
+            const hari = daysOfWeek[dragPreview.dayIndex];
+            const jamMulai = `${dragPreview.startHour.toString().padStart(2, '0')}:00`;
+            const jamSelesai = `${dragPreview.endHour.toString().padStart(2, '0')}:00`;
+
+            onDragCreateJadwal({
+                hari,
+                jamMulai,
+                jamSelesai
+            });
+        }
+
+        // Reset drag state
+        setIsDragging(false);
+        setDragStart(null);
+        setDragEnd(null);
         setDragPreview(null);
-      }
-    }
-  };
+    };
 
-  const handleMouseUp = () => {
-    if (isDragging && dragStart && dragEnd && dragPreview && onDragCreateJadwal) {
-      const hari = daysOfWeek[dragPreview.dayIndex];
-      const jamMulai = `${dragPreview.startHour.toString().padStart(2, '0')}:00`;
-      const jamSelesai = `${dragPreview.endHour.toString().padStart(2, '0')}:00`;
-
-      onDragCreateJadwal({
-        hari,
-        jamMulai,
-        jamSelesai
-      });
-    }
-
-    // Reset drag state
-    setIsDragging(false);
-    setDragStart(null);
-    setDragEnd(null);
-    setDragPreview(null);
-  };
-
-  // Clear drag preview when mouse leaves calendar area
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      setDragPreview(null);
-    }
-  };
+    // Clear drag preview when mouse leaves calendar area
+    const handleMouseLeave = () => {
+        if (isDragging) {
+            setDragPreview(null);
+        }
+    };
 
     return (
         <div className="bg-[#494949] rounded-lg shadow-lg overflow-hidden">
@@ -193,8 +193,8 @@ interface CalendarViewProps {
                         <button
                             onClick={() => setViewMode('week')}
                             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${viewMode === 'week'
-                                    ? 'bg-[#BFFF00] text-[#222222]'
-                                    : 'bg-[#656565] text-[#AAAAAA] hover:bg-[#525252]'
+                                ? 'bg-[#BFFF00] text-[#222222]'
+                                : 'bg-[#656565] text-[#AAAAAA] hover:bg-[#525252]'
                                 }`}
                             style={{ fontFamily: "'Inter', sans-serif" }}
                         >
@@ -203,8 +203,8 @@ interface CalendarViewProps {
                         <button
                             onClick={() => setViewMode('month')}
                             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${viewMode === 'month'
-                                    ? 'bg-[#BFFF00] text-[#222222]'
-                                    : 'bg-[#656565] text-[#AAAAAA] hover:bg-[#525252]'
+                                ? 'bg-[#BFFF00] text-[#222222]'
+                                : 'bg-[#656565] text-[#AAAAAA] hover:bg-[#525252]'
                                 }`}
                             style={{ fontFamily: "'Inter', sans-serif" }}
                         >
@@ -259,11 +259,10 @@ interface CalendarViewProps {
                                         return (
                                             <div
                                                 key={i}
-                                                className={`h-16 border-t border-[#656565] cursor-pointer transition-colors ${
-                                                    isInDragArea
-                                                        ? 'bg-blue-500 bg-opacity-50'
-                                                        : 'hover:bg-[#525252]'
-                                                }`}
+                                                className={`h-16 border-t border-[#656565] cursor-pointer transition-colors ${isInDragArea
+                                                    ? 'bg-blue-500 bg-opacity-50'
+                                                    : 'hover:bg-[#525252]'
+                                                    }`}
                                                 onMouseDown={(e) => handleMouseDown(index, i, e)}
                                                 onMouseEnter={() => handleMouseEnter(index, i)}
                                                 onMouseUp={handleMouseUp}

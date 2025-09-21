@@ -33,13 +33,13 @@ const JadwalDashboard: React.FC = () => {
     const [selectedRuangan, setSelectedRuangan] = useState<Ruangan>();
     const [selectedHari, setSelectedHari] = useState<string>();
 
-  // UI states
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [editingJadwal, setEditingJadwal] = useState<Jadwal>();
-  const [selectedJadwalForStats, setSelectedJadwalForStats] = useState<Jadwal>();
-  const [dragData, setDragData] = useState<{ hari: string; jamMulai: string; jamSelesai: string } | undefined>();    const { logout } = useAuth();
+    // UI states
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [showForm, setShowForm] = useState(false);
+    const [editingJadwal, setEditingJadwal] = useState<Jadwal>();
+    const [selectedJadwalForStats, setSelectedJadwalForStats] = useState<Jadwal>();
+    const [dragData, setDragData] = useState<{ hari: string; jamMulai: string; jamSelesai: string } | undefined>(); const { logout } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -120,16 +120,16 @@ const JadwalDashboard: React.FC = () => {
         setSelectedJadwalForStats(jadwal);
     };
 
-  const handleCreateJadwal = (date?: Date, timeSlot?: string) => {
-    setEditingJadwal(undefined);
-    setShowForm(true);
-  };
+    const handleCreateJadwal = (date?: Date, timeSlot?: string) => {
+        setEditingJadwal(undefined);
+        setShowForm(true);
+    };
 
-  const handleDragCreateJadwal = (dragDataParam: { hari: string; jamMulai: string; jamSelesai: string }) => {
-    setDragData(dragDataParam);
-    setEditingJadwal(undefined);
-    setShowForm(true);
-  };    const handleEditJadwal = (jadwal: Jadwal) => {
+    const handleDragCreateJadwal = (dragDataParam: { hari: string; jamMulai: string; jamSelesai: string }) => {
+        setDragData(dragDataParam);
+        setEditingJadwal(undefined);
+        setShowForm(true);
+    }; const handleEditJadwal = (jadwal: Jadwal) => {
         setEditingJadwal(jadwal);
         setShowForm(true);
     };
@@ -147,18 +147,18 @@ const JadwalDashboard: React.FC = () => {
         }
     };
 
-  const handleFormSuccess = () => {
-    setShowForm(false);
-    setEditingJadwal(undefined);
-    setDragData(undefined);
-    fetchAllData(); // Refresh data
-  };
+    const handleFormSuccess = () => {
+        setShowForm(false);
+        setEditingJadwal(undefined);
+        setDragData(undefined);
+        fetchAllData(); // Refresh data
+    };
 
-  const handleFormCancel = () => {
-    setShowForm(false);
-    setEditingJadwal(undefined);
-    setDragData(undefined);
-  };    const handleLogout = () => {
+    const handleFormCancel = () => {
+        setShowForm(false);
+        setEditingJadwal(undefined);
+        setDragData(undefined);
+    }; const handleLogout = () => {
         logout();
     };
 
@@ -273,25 +273,25 @@ const JadwalDashboard: React.FC = () => {
                 />
 
                 <div className="space-y-6">
-          {/* Calendar View - Full Width */}
-          <div>
-            <CalendarView
-              jadwalList={filteredJadwal}
-              onJadwalClick={handleJadwalClick}
-              onCreateJadwal={handleCreateJadwal}
-              onDragCreateJadwal={handleDragCreateJadwal}
-            />
-          </div>
+                    {/* Calendar View - Full Width */}
+                    <div>
+                        <CalendarView
+                            jadwalList={filteredJadwal}
+                            onJadwalClick={handleJadwalClick}
+                            onCreateJadwal={handleCreateJadwal}
+                            onDragCreateJadwal={handleDragCreateJadwal}
+                        />
+                    </div>
 
-          {/* Statistics Panel - Below Calendar */}
-          <div>
-            <StatisticsPanel
-              jadwalList={jadwalList}
-              selectedDosen={selectedJadwalForStats?.dosen}
-              selectedKelas={selectedJadwalForStats?.kelas}
-            />
-          </div>
-        </div>
+                    {/* Statistics Panel - Below Calendar */}
+                    <div>
+                        <StatisticsPanel
+                            jadwalList={jadwalList}
+                            selectedDosen={selectedJadwalForStats?.dosen}
+                            selectedKelas={selectedJadwalForStats?.kelas}
+                        />
+                    </div>
+                </div>
 
                 {/* Jadwal List */}
                 <div className="mt-8 bg-[#494949] shadow overflow-hidden sm:rounded-md">
@@ -314,13 +314,13 @@ const JadwalDashboard: React.FC = () => {
                                                     {jadwal.hari}
                                                 </div>
                                                 <div className="text-sm text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                    {new Date(jadwal.jamMulai).toLocaleTimeString('id-ID', {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })} - {new Date(jadwal.jamSelesai).toLocaleTimeString('id-ID', {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
-                                                    })}
+                                                    {(() => {
+                                                        const startTime = new Date(jadwal.jamMulai);
+                                                        const endTime = new Date(jadwal.jamSelesai);
+                                                        const startStr = `${startTime.getUTCHours().toString().padStart(2, '0')}:${startTime.getUTCMinutes().toString().padStart(2, '0')}`;
+                                                        const endStr = `${endTime.getUTCHours().toString().padStart(2, '0')}:${endTime.getUTCMinutes().toString().padStart(2, '0')}`;
+                                                        return `${startStr} - ${endStr}`;
+                                                    })()}
                                                 </div>
                                             </div>
                                             <div className="mt-2 text-sm text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>

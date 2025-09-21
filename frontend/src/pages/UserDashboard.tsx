@@ -1,41 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usersAPI, User } from '../services/api.service';
+import {
+  usersAPI,
+  prodiAPI,
+  mataKuliahAPI,
+  kelasAPI,
+  ruanganAPI,
+  jadwalAPI
+} from '../services/api.service';
 import { useAuth } from '../contexts/AuthContext';
 
 const UserDashboard: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalProdi: 0,
+    totalMataKuliah: 0,
+    totalKelas: 0,
+    totalRuangan: 0,
+    totalJadwal: 0,
+    usersByRole: { ADMIN: 0, DOSEN: 0, MAHASISWA: 0, KAPRODI: 0 }
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUsers();
+    fetchStats();
   }, []);
 
-  const fetchUsers = async () => {
+  const fetchStats = async () => {
     try {
       setLoading(true);
-      const userData = await usersAPI.findAll();
-      setUsers(userData);
+      const [
+        usersData,
+        prodiData,
+        mataKuliahData,
+        kelasData,
+        ruanganData,
+        jadwalData
+      ] = await Promise.all([
+        usersAPI.findAll(),
+        prodiAPI.findAll(),
+        mataKuliahAPI.findAll(),
+        kelasAPI.findAll(),
+        ruanganAPI.findAll(),
+        jadwalAPI.findAll()
+      ]);
+
+      // Calculate stats
+      const usersByRole = usersData.reduce((acc, user) => {
+        acc[user.role] = (acc[user.role] || 0) + 1;
+        return acc;
+      }, {} as any);
+
+      setStats({
+        totalUsers: usersData.length,
+        totalProdi: prodiData.length,
+        totalMataKuliah: mataKuliahData.length,
+        totalKelas: kelasData.length,
+        totalRuangan: ruanganData.length,
+        totalJadwal: jadwalData.length,
+        usersByRole
+      });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch users');
+      setError(err.response?.data?.message || 'Failed to fetch statistics');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
-      return;
-    }
-
-    try {
-      await usersAPI.delete(id);
-      setUsers(users.filter(user => user.id !== id));
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete user');
     }
   };
 
@@ -57,59 +88,22 @@ const UserDashboard: React.FC = () => {
       <div className="bg-[#494949] shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <h1 className="text-3xl font-bold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>Management Dashboard</h1>
+            <h1 className="text-3xl font-bold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>Dashboard</h1>
             <div className="flex space-x-4">
               <button
-                onClick={() => navigate('/users/create')}
+                onClick={() => navigate('/jadwal')}
                 className="bg-[#BFFF00] text-[#222222] font-semibold px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
-                Add User
+                📅 Jadwal
               </button>
               <button
-                onClick={() => navigate('/users/bulk-create')}
-                className="bg-[#656565] text-[#AAAAAA] font-semibold px-4 py-2 rounded-md hover:bg-[#525252] transition-colors"
+                onClick={() => navigate('/users')}
+                className="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
                 style={{ fontFamily: "'Poppins', sans-serif" }}
               >
-                Bulk Create
+                👥 Users
               </button>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => navigate('/prodi')}
-                  className="bg-blue-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  Prodi
-                </button>
-                <button
-                  onClick={() => navigate('/mata-kuliah')}
-                  className="bg-green-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-green-700 transition-colors text-sm"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  Mata Kuliah
-                </button>
-                <button
-                  onClick={() => navigate('/kelas')}
-                  className="bg-purple-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  Kelas
-                </button>
-                <button
-                  onClick={() => navigate('/ruangan')}
-                  className="bg-orange-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-orange-700 transition-colors text-sm"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  Ruangan
-                </button>
-                <button
-                  onClick={() => navigate('/jadwal')}
-                  className="bg-indigo-600 text-white font-semibold px-3 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  Jadwal
-                </button>
-              </div>
               <button
                 onClick={handleLogout}
                 className="bg-red-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
@@ -132,74 +126,160 @@ const UserDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Users List */}
-        <div className="bg-[#494949] shadow overflow-hidden sm:rounded-md">
-          <div className="px-4 py-4 sm:px-6 border-b border-[#656565]">
-            <h2 className="text-xl font-semibold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>Users</h2>
-          </div>
-          <ul className="divide-y divide-[#656565]">
-            {users.map((user) => (
-              <li key={user.id}>
-                <div className="px-4 py-4 sm:px-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-[#525252] flex items-center justify-center border border-[#656565]">
-                          <span className="text-sm font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                            {user.name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-[#AAAAAA]" style={{ fontFamily: "'Poppins', sans-serif" }}>{user.name}</div>
-                        <div className="text-sm text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>{user.email}</div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-sm text-[#AAAAAA]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'ADMIN'
-                          ? 'bg-red-900 text-red-200'
-                          : user.role === 'DOSEN'
-                            ? 'bg-blue-900 text-blue-200'
-                            : user.role === 'MAHASISWA'
-                              ? 'bg-green-900 text-green-200'
-                              : 'bg-yellow-900 text-yellow-200'
-                          }`}>
-                          {user.role}
-                        </span>
-                      </div>
-                      <div className="text-sm text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        {user.nip && <div>NIP: {user.nip}</div>}
-                        {user.nim && <div>NIM: {user.nim}</div>}
-                        {user.prodi && <div>Prodi: {user.prodi.namaProdi}</div>}
-                      </div>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => navigate(`/users/edit/${user.id}`)}
-                          className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
-                          style={{ fontFamily: "'Inter', sans-serif" }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user.id)}
-                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-                          style={{ fontFamily: "'Inter', sans-serif" }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="bg-[#494949] overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold">👥</span>
                   </div>
                 </div>
-              </li>
-            ))}
-          </ul>
-          {users.length === 0 && (
-            <div className="text-center py-8 text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>
-              No users found. <button onClick={() => navigate('/users/create')} className="text-[#BFFF00] hover:underline">Create your first user</button>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-[#AAAAAA] truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Total Users
+                    </dt>
+                    <dd className="text-lg font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      {stats.totalUsers}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+
+          <div className="bg-[#494949] overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold">📚</span>
+                  </div>
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-[#AAAAAA] truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Total Prodi
+                    </dt>
+                    <dd className="text-lg font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      {stats.totalProdi}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#494949] overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold">📖</span>
+                  </div>
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-[#AAAAAA] truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Total Mata Kuliah
+                    </dt>
+                    <dd className="text-lg font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      {stats.totalMataKuliah}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#494949] overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold">🏫</span>
+                  </div>
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-[#AAAAAA] truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Total Kelas
+                    </dt>
+                    <dd className="text-lg font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      {stats.totalKelas}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#494949] overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold">🏢</span>
+                  </div>
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-[#AAAAAA] truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Total Ruangan
+                    </dt>
+                    <dd className="text-lg font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      {stats.totalRuangan}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#494949] overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
+                    <span className="text-white font-bold">📅</span>
+                  </div>
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-[#AAAAAA] truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Total Jadwal
+                    </dt>
+                    <dd className="text-lg font-medium text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                      {stats.totalJadwal}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Users by Role Chart */}
+        <div className="bg-[#494949] shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg leading-6 font-medium text-[#BFFF00] mb-4" style={{ fontFamily: "'Poppins', sans-serif" }}>
+              Users by Role
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(stats.usersByRole).map(([role, count]) => (
+                <div key={role} className="text-center">
+                  <div className="text-2xl font-bold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+                    {count}
+                  </div>
+                  <div className="text-sm text-[#AAAAAA]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    {role}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
