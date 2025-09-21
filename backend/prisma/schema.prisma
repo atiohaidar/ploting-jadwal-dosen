@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  role     Role
+  gender   Gender?
+  nip      String?  // khusus dosen
+  nim      String?  // khusus mahasiswa
+
+  prodi    Prodi?   @relation(fields: [prodiId], references: [id])
+  prodiId  Int?
+
+  Jadwal   Jadwal[] @relation("DosenJadwal")
+  PermintaanJadwal PermintaanJadwal[] // 👈 ini yang ditambahkan
+
+}
+
+model Prodi {
+  id        Int           @id @default(autoincrement())
+  namaProdi String
+  users     User[]
+  kelas     Kelas[]
+  mataKuliah MataKuliah[]
+}
+
+model MataKuliah {
+  id       Int     @id @default(autoincrement())
+  kodeMk   String  @unique
+  namaMk   String
+  sks      Int
+  prodi    Prodi   @relation(fields: [prodiId], references: [id])
+  prodiId  Int
+
+  Jadwal   Jadwal[]
+}
+
+model Kelas {
+  id        Int     @id @default(autoincrement())
+  namaKelas String
+  angkatan  Int
+
+  prodi     Prodi   @relation(fields: [prodiId], references: [id])
+  prodiId   Int
+
+  Jadwal    Jadwal[]
+}
+
+model Ruangan {
+  id        Int     @id @default(autoincrement())
+  nama      String
+  kapasitas Int
+  lokasi    String?
+
+  Jadwal    Jadwal[]
+}
+
+model Jadwal {
+  id           Int        @id @default(autoincrement())
+  hari         String
+  jamMulai     DateTime
+  jamSelesai   DateTime
+  status       String     @default("aktif")
+
+  mataKuliah   MataKuliah @relation(fields: [mataKuliahId], references: [id])
+  mataKuliahId Int
+
+  dosen        User       @relation("DosenJadwal", fields: [dosenId], references: [id])
+  dosenId      Int
+
+  kelas        Kelas      @relation(fields: [kelasId], references: [id])
+  kelasId      Int
+
+  ruangan      Ruangan    @relation(fields: [ruanganId], references: [id])
+  ruanganId    Int
+
+  PermintaanJadwal PermintaanJadwal[]
+}
+
+model PermintaanJadwal {
+  id              Int      @id @default(autoincrement())
+  alasan          String
+  tanggalPengajuan DateTime @default(now())
+  status          PermintaanStatus @default(PENDING)
+
+  jadwal          Jadwal   @relation(fields: [jadwalId], references: [id])
+  jadwalId        Int
+
+  dosen           User     @relation(fields: [dosenId], references: [id])
+  dosenId         Int
+}
+
+enum Role {
+  ADMIN
+  DOSEN
+  MAHASISWA
+  KAPRODI
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum PermintaanStatus {
+  PENDING
+  DISETUJUI
+  DITOLAK
+}
