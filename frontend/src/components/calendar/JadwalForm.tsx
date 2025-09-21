@@ -9,6 +9,13 @@ interface JadwalFormProps {
   ruanganList: Ruangan[];
   onSuccess: () => void;
   onCancel: () => void;
+  dragData?: { hari: string; jamMulai: string; jamSelesai: string };
+  prefilledFilters?: {
+    dosen?: User;
+    mataKuliah?: MataKuliah;
+    kelas?: Kelas;
+    ruangan?: Ruangan;
+  };
 }
 
 const JadwalForm: React.FC<JadwalFormProps> = ({
@@ -18,22 +25,36 @@ const JadwalForm: React.FC<JadwalFormProps> = ({
   kelasList,
   ruanganList,
   onSuccess,
-  onCancel
+  onCancel,
+  dragData,
+  prefilledFilters
 }) => {
   const [formData, setFormData] = useState<CreateJadwalDto | UpdateJadwalDto>({
-    hari: jadwal?.hari || 'Senin',
-    jamMulai: jadwal ? new Date(jadwal.jamMulai).toTimeString().slice(0, 5) : '08:00',
-    jamSelesai: jadwal ? new Date(jadwal.jamSelesai).toTimeString().slice(0, 5) : '10:00',
-    mataKuliahId: jadwal?.mataKuliahId || 0,
-    dosenId: jadwal?.dosenId || 0,
-    kelasId: jadwal?.kelasId || 0,
-    ruanganId: jadwal?.ruanganId || 0,
+    hari: jadwal?.hari || dragData?.hari || 'Senin',
+    jamMulai: jadwal ? new Date(jadwal.jamMulai).toTimeString().slice(0, 5) : dragData?.jamMulai || '08:00',
+    jamSelesai: jadwal ? new Date(jadwal.jamSelesai).toTimeString().slice(0, 5) : dragData?.jamSelesai || '10:00',
+    mataKuliahId: jadwal?.mataKuliahId || prefilledFilters?.mataKuliah?.id || 0,
+    dosenId: jadwal?.dosenId || prefilledFilters?.dosen?.id || 0,
+    kelasId: jadwal?.kelasId || prefilledFilters?.kelas?.id || 0,
+    ruanganId: jadwal?.ruanganId || prefilledFilters?.ruangan?.id || 0,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const hariOptions = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCancel();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscKey);
+    return () => document.removeEventListener('keydown', handleEscKey);
+  }, [onCancel]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,9 +98,19 @@ const JadwalForm: React.FC<JadwalFormProps> = ({
     }));
   };
 
+  // Handle click outside modal
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onCancel();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#494949] rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-[#494949] rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto transform transition-all duration-300 ease-in-out scale-100 opacity-100">
         <div className="p-6">
           <h3 className="text-lg font-semibold text-[#BFFF00] mb-4" style={{ fontFamily: "'Poppins', sans-serif" }}>
             {jadwal ? 'Edit Jadwal' : 'Buat Jadwal Baru'}
