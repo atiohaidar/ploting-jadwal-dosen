@@ -57,6 +57,30 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Monitoring and Observability
+
+This application includes a comprehensive monitoring and observability system with the following components:
+
+### Features
+- **Logging**: Structured logging with Winston, correlation IDs, and request context
+- **Metrics**: Prometheus metrics collection with custom HTTP request metrics
+- **Health Checks**: Application health monitoring with database connectivity checks
+- **Distributed Tracing**: Jaeger integration for request tracing
+- **Error Handling**: Standardized error handling with custom exception filters
+
+### Endpoints
+- `GET /health` - Application health status
+- `GET /metrics` - Prometheus metrics in text format
+
+### Test Environment Considerations
+When running tests, the monitoring system automatically:
+- Uses isolated Prometheus registries to avoid metric conflicts
+- Skips Jaeger tracer initialization to prevent lingering connections
+- Avoids CLS namespace creation to prevent memory leaks
+- Cleans up all intervals and async resources in `onModuleDestroy` hooks
+
+This ensures Jest exits cleanly after test runs without lingering handles.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
