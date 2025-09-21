@@ -20,7 +20,14 @@ describe('UserController (e2e)', () => {
         await app.init();
 
         prisma = app.get(PrismaService);
-        await prisma.user.deleteMany(); // Clean up
+        // Clean up in correct order due to foreign key constraints
+        await prisma.permintaanJadwal.deleteMany();
+        await prisma.jadwal.deleteMany();
+        await prisma.mataKuliah.deleteMany();
+        await prisma.kelas.deleteMany();
+        await prisma.ruangan.deleteMany();
+        await prisma.user.deleteMany();
+        await prisma.prodi.deleteMany();
 
         // Create admin user for testing
         const adminPassword = 'adminpass';
@@ -42,7 +49,14 @@ describe('UserController (e2e)', () => {
     });
 
     afterEach(async () => {
+        // Clean up in correct order due to foreign key constraints
+        await prisma.permintaanJadwal.deleteMany();
+        await prisma.jadwal.deleteMany();
+        await prisma.mataKuliah.deleteMany();
+        await prisma.kelas.deleteMany();
+        await prisma.ruangan.deleteMany();
         await prisma.user.deleteMany();
+        await prisma.prodi.deleteMany();
         await app.close();
     });
 
