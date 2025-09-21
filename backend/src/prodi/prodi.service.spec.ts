@@ -49,7 +49,7 @@ describe('ProdiService', () => {
                 mataKuliah: [],
             };
 
-            prisma.prodi.create.mockResolvedValue(expectedResult);
+            (prisma.prodi.create as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.create(createProdiDto);
             expect(result).toEqual(expectedResult);
@@ -76,7 +76,7 @@ describe('ProdiService', () => {
                 },
             ];
 
-            prisma.prodi.findMany.mockResolvedValue(expectedResult);
+            (prisma.prodi.findMany as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findAll();
             expect(result).toEqual(expectedResult);
@@ -100,7 +100,7 @@ describe('ProdiService', () => {
                 mataKuliah: [],
             };
 
-            prisma.prodi.findUnique.mockResolvedValue(expectedResult);
+            (prisma.prodi.findUnique as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findOne(1);
             expect(result).toEqual(expectedResult);
@@ -115,7 +115,7 @@ describe('ProdiService', () => {
         });
 
         it('should throw NotFoundException if prodi not found', async () => {
-            prisma.prodi.findUnique.mockResolvedValue(null);
+            (prisma.prodi.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.findOne(1)).rejects.toThrow(NotFoundException);
         });
@@ -134,14 +134,14 @@ describe('ProdiService', () => {
                 mataKuliah: [],
             };
 
-            prisma.prodi.findUnique.mockResolvedValue({
+            (prisma.prodi.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 namaProdi: 'Teknik Informatika',
                 users: [],
                 kelas: [],
                 mataKuliah: [],
             });
-            prisma.prodi.update.mockResolvedValue(expectedResult);
+            (prisma.prodi.update as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.update(1, updateProdiDto);
             expect(result).toEqual(expectedResult);
@@ -157,7 +157,7 @@ describe('ProdiService', () => {
         });
 
         it('should throw NotFoundException if prodi not found', async () => {
-            prisma.prodi.findUnique.mockResolvedValue(null);
+            (prisma.prodi.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.update(1, { namaProdi: 'Updated' })).rejects.toThrow(NotFoundException);
         });
@@ -173,8 +173,8 @@ describe('ProdiService', () => {
                 mataKuliah: [],
             };
 
-            prisma.prodi.findUnique.mockResolvedValue(expectedResult);
-            prisma.prodi.delete.mockResolvedValue(expectedResult);
+            (prisma.prodi.findUnique as jest.Mock).mockResolvedValue(expectedResult);
+            (prisma.prodi.delete as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.remove(1);
             expect(result).toEqual(expectedResult);
@@ -189,7 +189,7 @@ describe('ProdiService', () => {
         });
 
         it('should throw NotFoundException if prodi not found', async () => {
-            prisma.prodi.findUnique.mockResolvedValue(null);
+            (prisma.prodi.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.remove(1)).rejects.toThrow(NotFoundException);
         });

@@ -9,6 +9,7 @@ import { ProdiModule } from './prodi/prodi.module';
 import { MataKuliahModule } from './mata-kuliah/mata-kuliah.module';
 import { KelasModule } from './kelas/kelas.module';
 import { RuanganModule } from './ruangan/ruangan.module';
+import { JadwalModule } from './jadwal/jadwal.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RuanganModule } from './ruangan/ruangan.module';
     MataKuliahModule,
     KelasModule,
     RuanganModule,
+    JadwalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -53,8 +53,8 @@ describe('KelasService', () => {
                 Jadwal: [],
             };
 
-            prisma.kelas.findFirst.mockResolvedValue(null);
-            prisma.kelas.create.mockResolvedValue(expectedResult);
+            (prisma.kelas.findFirst as jest.Mock).mockResolvedValue(null);
+            (prisma.kelas.create as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.create(createKelasDto);
             expect(result).toEqual(expectedResult);
@@ -74,7 +74,7 @@ describe('KelasService', () => {
                 prodiId: 1,
             };
 
-            prisma.kelas.findFirst.mockResolvedValue({
+            (prisma.kelas.findFirst as jest.Mock).mockResolvedValue({
                 id: 1,
                 namaKelas: 'TI-3A',
                 angkatan: 2023,
@@ -98,7 +98,7 @@ describe('KelasService', () => {
                 },
             ];
 
-            prisma.kelas.findMany.mockResolvedValue(expectedResult);
+            (prisma.kelas.findMany as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findAll();
             expect(result).toEqual(expectedResult);
@@ -122,7 +122,7 @@ describe('KelasService', () => {
                 Jadwal: [],
             };
 
-            prisma.kelas.findUnique.mockResolvedValue(expectedResult);
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findOne(1);
             expect(result).toEqual(expectedResult);
@@ -136,7 +136,7 @@ describe('KelasService', () => {
         });
 
         it('should throw NotFoundException if kelas not found', async () => {
-            prisma.kelas.findUnique.mockResolvedValue(null);
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.findOne(1)).rejects.toThrow(NotFoundException);
         });
@@ -156,7 +156,7 @@ describe('KelasService', () => {
                 Jadwal: [],
             };
 
-            prisma.kelas.findUnique.mockResolvedValue({
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 namaKelas: 'TI-3A',
                 angkatan: 2023,
@@ -164,8 +164,8 @@ describe('KelasService', () => {
                 prodi: { id: 1, namaProdi: 'Teknik Informatika' },
                 Jadwal: [],
             });
-            prisma.kelas.findFirst.mockResolvedValue(null);
-            prisma.kelas.update.mockResolvedValue(expectedResult);
+            (prisma.kelas.findFirst as jest.Mock).mockResolvedValue(null);
+            (prisma.kelas.update as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.update(1, updateKelasDto);
             expect(result).toEqual(expectedResult);
@@ -184,7 +184,7 @@ describe('KelasService', () => {
                 namaKelas: 'TI-3B',
             };
 
-            prisma.kelas.findUnique.mockResolvedValue({
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 namaKelas: 'TI-3A',
                 angkatan: 2023,
@@ -192,7 +192,7 @@ describe('KelasService', () => {
                 prodi: { id: 1, namaProdi: 'Teknik Informatika' },
                 Jadwal: [],
             });
-            prisma.kelas.findFirst.mockResolvedValue({
+            (prisma.kelas.findFirst as jest.Mock).mockResolvedValue({
                 id: 2,
                 namaKelas: 'TI-3B',
                 angkatan: 2023,
@@ -203,7 +203,7 @@ describe('KelasService', () => {
         });
 
         it('should throw NotFoundException if kelas not found', async () => {
-            prisma.kelas.findUnique.mockResolvedValue(null);
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.update(1, { namaKelas: 'Updated' })).rejects.toThrow(NotFoundException);
         });
@@ -220,8 +220,8 @@ describe('KelasService', () => {
                 Jadwal: [],
             };
 
-            prisma.kelas.findUnique.mockResolvedValue(expectedResult);
-            prisma.kelas.delete.mockResolvedValue(expectedResult);
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue(expectedResult);
+            (prisma.kelas.delete as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.remove(1);
             expect(result).toEqual(expectedResult);
@@ -235,7 +235,7 @@ describe('KelasService', () => {
         });
 
         it('should throw NotFoundException if kelas not found', async () => {
-            prisma.kelas.findUnique.mockResolvedValue(null);
+            (prisma.kelas.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.remove(1)).rejects.toThrow(NotFoundException);
         });

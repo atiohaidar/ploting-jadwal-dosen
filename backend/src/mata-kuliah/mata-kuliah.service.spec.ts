@@ -55,8 +55,8 @@ describe('MataKuliahService', () => {
                 Jadwal: [],
             };
 
-            prisma.mataKuliah.findUnique.mockResolvedValue(null);
-            prisma.mataKuliah.create.mockResolvedValue(expectedResult);
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue(null);
+            (prisma.mataKuliah.create as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.create(createMataKuliahDto);
             expect(result).toEqual(expectedResult);
@@ -77,7 +77,7 @@ describe('MataKuliahService', () => {
                 prodiId: 1,
             };
 
-            prisma.mataKuliah.findUnique.mockResolvedValue({
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 kodeMk: 'TI101',
                 namaMk: 'Pemrograman Dasar',
@@ -103,7 +103,7 @@ describe('MataKuliahService', () => {
                 },
             ];
 
-            prisma.mataKuliah.findMany.mockResolvedValue(expectedResult);
+            (prisma.mataKuliah.findMany as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findAll();
             expect(result).toEqual(expectedResult);
@@ -128,7 +128,7 @@ describe('MataKuliahService', () => {
                 Jadwal: [],
             };
 
-            prisma.mataKuliah.findUnique.mockResolvedValue(expectedResult);
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findOne(1);
             expect(result).toEqual(expectedResult);
@@ -142,7 +142,7 @@ describe('MataKuliahService', () => {
         });
 
         it('should throw NotFoundException if mata kuliah not found', async () => {
-            prisma.mataKuliah.findUnique.mockResolvedValue(null);
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.findOne(1)).rejects.toThrow(NotFoundException);
         });
@@ -163,7 +163,7 @@ describe('MataKuliahService', () => {
                 Jadwal: [],
             };
 
-            prisma.mataKuliah.findUnique.mockResolvedValue({
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 kodeMk: 'TI101',
                 namaMk: 'Pemrograman Dasar',
@@ -172,8 +172,8 @@ describe('MataKuliahService', () => {
                 prodi: { id: 1, namaProdi: 'Teknik Informatika' },
                 Jadwal: [],
             });
-            prisma.mataKuliah.findFirst.mockResolvedValue(null);
-            prisma.mataKuliah.update.mockResolvedValue(expectedResult);
+            (prisma.mataKuliah.findFirst as jest.Mock).mockResolvedValue(null);
+            (prisma.mataKuliah.update as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.update(1, updateMataKuliahDto);
             expect(result).toEqual(expectedResult);
@@ -187,13 +187,14 @@ describe('MataKuliahService', () => {
             });
         });
 
+
         it('should throw ConflictException if kodeMk already exists', async () => {
             const updateMataKuliahDto = {
                 kodeMk: 'TI102',
             };
 
             // First call: findOne(id) - returns the mata kuliah being updated
-            prisma.mataKuliah.findUnique.mockResolvedValueOnce({
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValueOnce({
                 id: 1,
                 kodeMk: 'TI101',
                 namaMk: 'Pemrograman Dasar',
@@ -203,7 +204,7 @@ describe('MataKuliahService', () => {
                 Jadwal: [],
             });
             // Second call: check kodeMk conflict - returns existing mata kuliah with same kodeMk
-            prisma.mataKuliah.findUnique.mockResolvedValueOnce({
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValueOnce({
                 id: 2,
                 kodeMk: 'TI102',
                 namaMk: 'Pemrograman Lanjutan',
@@ -215,7 +216,7 @@ describe('MataKuliahService', () => {
         });
 
         it('should throw NotFoundException if mata kuliah not found', async () => {
-            prisma.mataKuliah.findUnique.mockResolvedValue(null);
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.update(1, { namaMk: 'Updated' })).rejects.toThrow(NotFoundException);
         });
@@ -233,8 +234,8 @@ describe('MataKuliahService', () => {
                 Jadwal: [],
             };
 
-            prisma.mataKuliah.findUnique.mockResolvedValue(expectedResult);
-            prisma.mataKuliah.delete.mockResolvedValue(expectedResult);
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue(expectedResult);
+            (prisma.mataKuliah.delete as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.remove(1);
             expect(result).toEqual(expectedResult);
@@ -248,7 +249,7 @@ describe('MataKuliahService', () => {
         });
 
         it('should throw NotFoundException if mata kuliah not found', async () => {
-            prisma.mataKuliah.findUnique.mockResolvedValue(null);
+            (prisma.mataKuliah.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.remove(1)).rejects.toThrow(NotFoundException);
         });

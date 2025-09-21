@@ -52,8 +52,8 @@ describe('RuanganService', () => {
                 Jadwal: [],
             };
 
-            prisma.ruangan.findFirst.mockResolvedValue(null);
-            prisma.ruangan.create.mockResolvedValue(expectedResult);
+            (prisma.ruangan.findFirst as jest.Mock).mockResolvedValue(null);
+            (prisma.ruangan.create as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.create(createRuanganDto);
             expect(result).toEqual(expectedResult);
@@ -78,8 +78,8 @@ describe('RuanganService', () => {
                 Jadwal: [],
             };
 
-            prisma.ruangan.findFirst.mockResolvedValue(null);
-            prisma.ruangan.create.mockResolvedValue(expectedResult);
+            (prisma.ruangan.findFirst as jest.Mock).mockResolvedValue(null);
+            (prisma.ruangan.create as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.create(createRuanganDto);
             expect(result).toEqual(expectedResult);
@@ -91,7 +91,7 @@ describe('RuanganService', () => {
                 kapasitas: 30,
             };
 
-            prisma.ruangan.findFirst.mockResolvedValue({
+            (prisma.ruangan.findFirst as jest.Mock).mockResolvedValue({
                 id: 1,
                 nama: 'Lab Komputer 1',
                 kapasitas: 30,
@@ -114,7 +114,7 @@ describe('RuanganService', () => {
                 },
             ];
 
-            prisma.ruangan.findMany.mockResolvedValue(expectedResult);
+            (prisma.ruangan.findMany as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findAll();
             expect(result).toEqual(expectedResult);
@@ -136,7 +136,7 @@ describe('RuanganService', () => {
                 Jadwal: [],
             };
 
-            prisma.ruangan.findUnique.mockResolvedValue(expectedResult);
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.findOne(1);
             expect(result).toEqual(expectedResult);
@@ -149,7 +149,7 @@ describe('RuanganService', () => {
         });
 
         it('should throw NotFoundException if ruangan not found', async () => {
-            prisma.ruangan.findUnique.mockResolvedValue(null);
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.findOne(1)).rejects.toThrow(NotFoundException);
         });
@@ -168,15 +168,15 @@ describe('RuanganService', () => {
                 Jadwal: [],
             };
 
-            prisma.ruangan.findUnique.mockResolvedValue({
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 nama: 'Lab Komputer 1',
                 kapasitas: 30,
                 lokasi: 'Gedung A Lantai 2',
                 Jadwal: [],
             });
-            prisma.ruangan.findFirst.mockResolvedValue(null);
-            prisma.ruangan.update.mockResolvedValue(expectedResult);
+            (prisma.ruangan.findFirst as jest.Mock).mockResolvedValue(null);
+            (prisma.ruangan.update as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.update(1, updateRuanganDto);
             expect(result).toEqual(expectedResult);
@@ -194,14 +194,14 @@ describe('RuanganService', () => {
                 nama: 'Lab Komputer 2',
             };
 
-            prisma.ruangan.findUnique.mockResolvedValue({
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue({
                 id: 1,
                 nama: 'Lab Komputer 1',
                 kapasitas: 30,
                 lokasi: 'Gedung A Lantai 2',
                 Jadwal: [],
             });
-            prisma.ruangan.findFirst.mockResolvedValue({
+            (prisma.ruangan.findFirst as jest.Mock).mockResolvedValue({
                 id: 2,
                 nama: 'Lab Komputer 2',
                 kapasitas: 25,
@@ -212,7 +212,7 @@ describe('RuanganService', () => {
         });
 
         it('should throw NotFoundException if ruangan not found', async () => {
-            prisma.ruangan.findUnique.mockResolvedValue(null);
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.update(1, { nama: 'Updated' })).rejects.toThrow(NotFoundException);
         });
@@ -228,8 +228,8 @@ describe('RuanganService', () => {
                 Jadwal: [],
             };
 
-            prisma.ruangan.findUnique.mockResolvedValue(expectedResult);
-            prisma.ruangan.delete.mockResolvedValue(expectedResult);
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue(expectedResult);
+            (prisma.ruangan.delete as jest.Mock).mockResolvedValue(expectedResult);
 
             const result = await service.remove(1);
             expect(result).toEqual(expectedResult);
@@ -242,7 +242,7 @@ describe('RuanganService', () => {
         });
 
         it('should throw NotFoundException if ruangan not found', async () => {
-            prisma.ruangan.findUnique.mockResolvedValue(null);
+            (prisma.ruangan.findUnique as jest.Mock).mockResolvedValue(null);
 
             await expect(service.remove(1)).rejects.toThrow(NotFoundException);
         });
