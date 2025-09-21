@@ -13,7 +13,7 @@ import KelasDashboard from './pages/KelasDashboard';
 import KelasForm from './components/KelasForm';
 import RuanganDashboard from './pages/RuanganDashboard';
 import RuanganForm from './components/RuanganForm';
-import './App.css';
+import NotFound from './pages/NotFound';
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -164,6 +164,7 @@ const AppRoutes: React.FC = () => {
         }
       />
       <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
