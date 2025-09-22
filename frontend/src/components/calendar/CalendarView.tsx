@@ -378,11 +378,11 @@ interface CalendarViewProps {
                         const dayJadwal = getJadwalForDay(date);
                         const isToday = date.toDateString() === new Date().toDateString();
                         const { layout: jadwalLayout, maxColumn } = getJadwalLayout(dayJadwal);
-                        const flexGrow = maxColumn === 0 ? 0.5 : maxColumn;
-                        const flexBasis = '120px';
+                        const minWidth = Math.max(150, maxColumn * 100); // Minimum 150px, +100px per overlapping column
+                        const flexBasis = `${minWidth}px`;
 
                         return (
-                            <div key={index} className="border-l border-[#656565] pl-2 relative" style={{ flexBasis, flexGrow }}>
+                            <div key={index} className="border-l border-[#656565] pl-2 relative" style={{ flexBasis, flexGrow: 0, flexShrink: 0 }}>
                                 {/* Day header */}
                                 <div className={`h-12 text-center p-2 rounded-md mb-2 ${isToday ? 'bg-[#BFFF00] text-[#222222]' : 'bg-[#656565] text-[#AAAAAA]'
                                     }`}>
@@ -437,32 +437,43 @@ interface CalendarViewProps {
                                     {/* Jadwal events */}
                                     {jadwalLayout.map((layout) => {
                                         const dosenColor = getDosenColor(layout.jadwal.dosenId);
+                                        const cardHeight = Math.max(layout.height, 40);
+                                        const isSmallCard = cardHeight < 60;
+                                        const fontSize = isSmallCard ? 'text-xs' : 'text-xs';
+                                        const padding = isSmallCard ? 'p-1' : 'p-2';
+                                        
                                         return (
                                             <div
                                                 key={layout.jadwal.id}
-                                                className={`absolute rounded-md p-2 cursor-pointer transition-colors border ${dosenColor}`}
+                                                className={`absolute rounded-md cursor-pointer transition-colors border ${dosenColor} ${padding} overflow-hidden`}
                                                 style={{
                                                     top: `${layout.top}px`,
-                                                    height: `${Math.max(layout.height, 40)}px`,
+                                                    height: `${cardHeight}px`,
                                                     left: `${layout.left}%`,
                                                     width: `${layout.width}%`,
-                                                    zIndex: 10
+                                                    zIndex: 10,
+                                                    fontSize: isSmallCard ? '10px' : '12px',
+                                                    minWidth: '80px'
                                                 }}
                                                 onMouseDown={(e) => handleJadwalMouseDown(layout.jadwal, e)}
                                                 onClick={() => onJadwalClick?.(layout.jadwal)}
                                             >
-                                                <div className="text-xs font-medium text-white truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                <div className={`${fontSize} font-medium text-white truncate`} style={{ fontFamily: "'Inter', sans-serif", whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                                                     {layout.jadwal.mataKuliah.namaMk}
                                                 </div>
-                                                <div className="text-xs text-white text-opacity-80 truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                    {layout.jadwal.dosen.name}
-                                                </div>
-                                                <div className="text-xs text-white text-opacity-80 truncate" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                                {!isSmallCard && (
+                                                    <div className={`${fontSize} text-white text-opacity-80 truncate`} style={{ fontFamily: "'Inter', sans-serif", whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                                                        {layout.jadwal.dosen.name}
+                                                    </div>
+                                                )}
+                                                <div className={`${fontSize} text-white text-opacity-80 truncate`} style={{ fontFamily: "'Inter', sans-serif", whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                                                     {layout.jadwal.ruangan.nama}
                                                 </div>
-                                                <div className="text-xs text-white text-opacity-80" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                    {formatTime(layout.jadwal.jamMulai)} - {formatTime(layout.jadwal.jamSelesai)}
-                                                </div>
+                                                {!isSmallCard && (
+                                                    <div className={`${fontSize} text-white text-opacity-80 truncate`} style={{ fontFamily: "'Inter', sans-serif", whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                                                        {formatTime(layout.jadwal.jamMulai)} - {formatTime(layout.jadwal.jamSelesai)}
+                                                    </div>
+                                                )}
                                             </div>
                                         );
                                     })}

@@ -93,7 +93,7 @@ export class JadwalService {
         await this.findOne(id);
 
         // Check for conflicts before updating
-        await this.checkConflicts(updateJadwalDto, id);
+        // await this.checkConflicts(updateJadwalDto, id);
 
         return this.prisma.jadwal.update({
             where: { id },
@@ -180,6 +180,57 @@ export class JadwalService {
         dosenConflicts.forEach(conflict => {
             conflicts.push({
                 type: 'DOSEN',
+                existingJadwal: {
+                    id: conflict.id,
+                    hari: conflict.hari,
+                    jamMulai: this.formatTimeString(conflict.jamMulai),
+                    jamSelesai: this.formatTimeString(conflict.jamSelesai),
+                    mataKuliah: conflict.mataKuliah,
+                    dosen: conflict.dosen,
+                    kelas: conflict.kelas,
+                    ruangan: conflict.ruangan,
+                },
+            });
+        });
+
+        // Check for kelas conflict
+        const kelasConflicts = await this.prisma.jadwal.findMany({
+            where: {
+                kelasId: jadwalData.kelasId,
+                hari: hari,
+                OR: [
+                    {
+                        AND: [
+                            { jamMulai: { lte: jamMulai } },
+                            { jamSelesai: { gt: jamMulai } }
+                        ]
+                    },
+                    {
+                        AND: [
+                            { jamMulai: { lt: jamSelesai } },
+                            { jamSelesai: { gte: jamSelesai } }
+                        ]
+                    },
+                    {
+                        AND: [
+                            { jamMulai: { gte: jamMulai } },
+                            { jamSelesai: { lte: jamSelesai } }
+                        ]
+                    }
+                ],
+                ...(excludeId && { id: { not: excludeId } })
+            },
+            include: {
+                mataKuliah: { select: { namaMk: true } },
+                dosen: { select: { name: true } },
+                kelas: { select: { namaKelas: true } },
+                ruangan: { select: { nama: true } },
+            },
+        });
+
+        kelasConflicts.forEach(conflict => {
+            conflicts.push({
+                type: 'KELAS',
                 existingJadwal: {
                     id: conflict.id,
                     hari: conflict.hari,
