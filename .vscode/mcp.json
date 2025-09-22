@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "ploting_jadwal_dosen": {
+      "command": "python",
+      "args": [
+        "ai/mcp_ploting_jadwal_dosen.py"
+      ]
+    }
+  }
+}
