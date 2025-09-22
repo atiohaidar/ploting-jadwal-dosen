@@ -263,8 +263,8 @@ async function main() {
   const jadwalData = [
     {
       hari: 'Senin',
-      jamMulai: new Date('2025-01-01T08:00:00Z'),
-      jamSelesai: new Date('2025-01-01T10:30:00Z'),
+      jamMulai: '08:00',
+      jamSelesai: '10:30',
       mataKuliahId: mataKuliahList[0].id, // Algoritma dan Pemrograman
       dosenId: dosenUsers[0].id, // Budi Santoso
       kelasId: kelasList[0].id, // TI-2021-A
@@ -272,8 +272,8 @@ async function main() {
     },
     {
       hari: 'Senin',
-      jamMulai: new Date('2025-01-01T10:45:00Z'),
-      jamSelesai: new Date('2025-01-01T13:15:00Z'),
+      jamMulai: '10:45',
+      jamSelesai: '13:15',
       mataKuliahId: mataKuliahList[1].id, // Struktur Data
       dosenId: dosenUsers[1].id, // Maya Sari
       kelasId: kelasList[0].id, // TI-2021-A
@@ -281,8 +281,8 @@ async function main() {
     },
     {
       hari: 'Selasa',
-      jamMulai: new Date('2025-01-01T08:00:00Z'),
-      jamSelesai: new Date('2025-01-01T10:30:00Z'),
+      jamMulai: '08:00',
+      jamSelesai: '10:30',
       mataKuliahId: mataKuliahList[5].id, // Sistem Informasi
       dosenId: dosenUsers[4].id, // Agus Priyanto
       kelasId: kelasList[3].id, // SI-2021-A
@@ -290,8 +290,8 @@ async function main() {
     },
     {
       hari: 'Rabu',
-      jamMulai: new Date('2025-01-01T08:00:00Z'),
-      jamSelesai: new Date('2025-01-01T10:30:00Z'),
+      jamMulai: '08:00',
+      jamSelesai: '10:30',
       mataKuliahId: mataKuliahList[7].id, // Dasar Teknik Elektro
       dosenId: dosenUsers[2].id, // Hendro Wicaksono
       kelasId: kelasList[5].id, // TE-2021-A

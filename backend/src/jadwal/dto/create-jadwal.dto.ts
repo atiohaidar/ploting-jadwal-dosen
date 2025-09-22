@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsInt, IsDateString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsInt, Matches, IsOptional } from 'class-validator';
 
 export class CreateJadwalDto {
     @IsNotEmpty()
@@ -6,11 +6,13 @@ export class CreateJadwalDto {
     hari: string;
 
     @IsNotEmpty()
-    @IsDateString()
+    @IsString()
+    @Matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, { message: 'jamMulai must be in HH:MM format' })
     jamMulai: string;
 
     @IsNotEmpty()
-    @IsDateString()
+    @IsString()
+    @Matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, { message: 'jamSelesai must be in HH:MM format' })
     jamSelesai: string;
 
     @IsNotEmpty()

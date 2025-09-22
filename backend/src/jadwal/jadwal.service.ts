@@ -21,6 +21,20 @@ interface ConflictDetail {
 export class JadwalService {
     constructor(private prisma: PrismaService) { }
 
+    private parseTimeString(timeStr: string): Date {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const date = new Date();
+        date.setUTCHours(hours, minutes, 0, 0);
+        return date;
+    }
+
+    private formatTimeString(time: Date | string): string {
+        if (typeof time === 'string') {
+            return time;
+        }
+        return `${time.getUTCHours().toString().padStart(2, '0')}:${time.getUTCMinutes().toString().padStart(2, '0')}`;
+    }
+
     async create(createJadwalDto: CreateJadwalDto) {
         // Check for conflicts before creating
         await this.checkConflicts(createJadwalDto);
@@ -28,8 +42,8 @@ export class JadwalService {
         return this.prisma.jadwal.create({
             data: {
                 hari: createJadwalDto.hari,
-                jamMulai: new Date(createJadwalDto.jamMulai),
-                jamSelesai: new Date(createJadwalDto.jamSelesai),
+                jamMulai: createJadwalDto.jamMulai,
+                jamSelesai: createJadwalDto.jamSelesai,
                 mataKuliahId: createJadwalDto.mataKuliahId,
                 dosenId: createJadwalDto.dosenId,
                 kelasId: createJadwalDto.kelasId,
@@ -85,8 +99,8 @@ export class JadwalService {
             where: { id },
             data: {
                 ...(updateJadwalDto.hari && { hari: updateJadwalDto.hari }),
-                ...(updateJadwalDto.jamMulai && { jamMulai: new Date(updateJadwalDto.jamMulai) }),
-                ...(updateJadwalDto.jamSelesai && { jamSelesai: new Date(updateJadwalDto.jamSelesai) }),
+                ...(updateJadwalDto.jamMulai && { jamMulai: updateJadwalDto.jamMulai }),
+                ...(updateJadwalDto.jamSelesai && { jamSelesai: updateJadwalDto.jamSelesai }),
                 ...(updateJadwalDto.mataKuliahId && { mataKuliahId: updateJadwalDto.mataKuliahId }),
                 ...(updateJadwalDto.dosenId && { dosenId: updateJadwalDto.dosenId }),
                 ...(updateJadwalDto.kelasId && { kelasId: updateJadwalDto.kelasId }),
@@ -116,10 +130,15 @@ export class JadwalService {
         });
     }
 
+    private timeToMinutes(timeStr: string): number {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+    }
+
     private async checkConflicts(jadwalData: CreateJadwalDto | UpdateJadwalDto, excludeId?: number) {
         const hari = jadwalData.hari!;
-        const jamMulai = new Date(jadwalData.jamMulai!);
-        const jamSelesai = new Date(jadwalData.jamSelesai!);
+        const jamMulai = jadwalData.jamMulai!;
+        const jamSelesai = jadwalData.jamSelesai!;
 
         const conflicts: ConflictDetail[] = [];
 
@@ -164,110 +183,8 @@ export class JadwalService {
                 existingJadwal: {
                     id: conflict.id,
                     hari: conflict.hari,
-                    jamMulai: conflict.jamMulai.toISOString(),
-                    jamSelesai: conflict.jamSelesai.toISOString(),
-                    mataKuliah: conflict.mataKuliah,
-                    dosen: conflict.dosen,
-                    kelas: conflict.kelas,
-                    ruangan: conflict.ruangan,
-                },
-            });
-        });
-
-        // Check for ruangan conflict
-        const ruanganConflicts = await this.prisma.jadwal.findMany({
-            where: {
-                ruanganId: jadwalData.ruanganId,
-                hari: hari,
-                OR: [
-                    {
-                        AND: [
-                            { jamMulai: { lte: jamMulai } },
-                            { jamSelesai: { gt: jamMulai } }
-                        ]
-                    },
-                    {
-                        AND: [
-                            { jamMulai: { lt: jamSelesai } },
-                            { jamSelesai: { gte: jamSelesai } }
-                        ]
-                    },
-                    {
-                        AND: [
-                            { jamMulai: { gte: jamMulai } },
-                            { jamSelesai: { lte: jamSelesai } }
-                        ]
-                    }
-                ],
-                ...(excludeId && { id: { not: excludeId } })
-            },
-            include: {
-                mataKuliah: { select: { namaMk: true } },
-                dosen: { select: { name: true } },
-                kelas: { select: { namaKelas: true } },
-                ruangan: { select: { nama: true } },
-            },
-        });
-
-        ruanganConflicts.forEach(conflict => {
-            conflicts.push({
-                type: 'RUANGAN',
-                existingJadwal: {
-                    id: conflict.id,
-                    hari: conflict.hari,
-                    jamMulai: conflict.jamMulai.toISOString(),
-                    jamSelesai: conflict.jamSelesai.toISOString(),
-                    mataKuliah: conflict.mataKuliah,
-                    dosen: conflict.dosen,
-                    kelas: conflict.kelas,
-                    ruangan: conflict.ruangan,
-                },
-            });
-        });
-
-        // Check for kelas conflict
-        const kelasConflicts = await this.prisma.jadwal.findMany({
-            where: {
-                kelasId: jadwalData.kelasId,
-                hari: hari,
-                OR: [
-                    {
-                        AND: [
-                            { jamMulai: { lte: jamMulai } },
-                            { jamSelesai: { gt: jamMulai } }
-                        ]
-                    },
-                    {
-                        AND: [
-                            { jamMulai: { lt: jamSelesai } },
-                            { jamSelesai: { gte: jamSelesai } }
-                        ]
-                    },
-                    {
-                        AND: [
-                            { jamMulai: { gte: jamMulai } },
-                            { jamSelesai: { lte: jamSelesai } }
-                        ]
-                    }
-                ],
-                ...(excludeId && { id: { not: excludeId } })
-            },
-            include: {
-                mataKuliah: { select: { namaMk: true } },
-                dosen: { select: { name: true } },
-                kelas: { select: { namaKelas: true } },
-                ruangan: { select: { nama: true } },
-            },
-        });
-
-        kelasConflicts.forEach(conflict => {
-            conflicts.push({
-                type: 'KELAS',
-                existingJadwal: {
-                    id: conflict.id,
-                    hari: conflict.hari,
-                    jamMulai: conflict.jamMulai.toISOString(),
-                    jamSelesai: conflict.jamSelesai.toISOString(),
+                    jamMulai: this.formatTimeString(conflict.jamMulai),
+                    jamSelesai: this.formatTimeString(conflict.jamSelesai),
                     mataKuliah: conflict.mataKuliah,
                     dosen: conflict.dosen,
                     kelas: conflict.kelas,

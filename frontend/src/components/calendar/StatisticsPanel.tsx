@@ -28,9 +28,11 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
         // Calculate hours per day and week
         const dayStats = Object.entries(dailyStats).map(([hari, jadwals]) => {
             const totalHours = jadwals.reduce((sum, jadwal) => {
-                const start = new Date(jadwal.jamMulai);
-                const end = new Date(jadwal.jamSelesai);
-                const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+                const [startHour, startMin] = jadwal.jamMulai.split(':').map(Number);
+                const [endHour, endMin] = jadwal.jamSelesai.split(':').map(Number);
+                const startDecimal = startHour + startMin / 60;
+                const endDecimal = endHour + endMin / 60;
+                const hours = endDecimal - startDecimal;
                 return sum + hours;
             }, 0);
 

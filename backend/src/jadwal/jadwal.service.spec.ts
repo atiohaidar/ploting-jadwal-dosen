@@ -51,8 +51,8 @@ describe('JadwalService', () => {
             const expectedResult = {
                 id: 1,
                 hari: 'Senin',
-                jamMulai: new Date('2025-09-21T08:00:00.000Z'),
-                jamSelesai: new Date('2025-09-21T10:00:00.000Z'),
+                jamMulai: '08:00',
+                jamSelesai: '10:00',
                 mataKuliahId: 1,
                 dosenId: 1,
                 kelasId: 1,
@@ -72,8 +72,8 @@ describe('JadwalService', () => {
             expect(prisma.jadwal.create).toHaveBeenCalledWith({
                 data: {
                     hari: 'Senin',
-                    jamMulai: new Date('2025-09-21T08:00:00.000Z'),
-                    jamSelesai: new Date('2025-09-21T10:00:00.000Z'),
+                    jamMulai: '08:00',
+                    jamSelesai: '10:00',
                     mataKuliahId: 1,
                     dosenId: 1,
                     kelasId: 1,
@@ -186,7 +186,7 @@ describe('JadwalService', () => {
                 {
                     id: 1,
                     hari: 'Senin',
-                    jamMulai: new Date('2025-09-21T08:00:00.000Z'),
+                    jamMulai: '08:00',
                     jamSelesai: new Date('2025-09-21T10:00:00.000Z'),
                     mataKuliah: { namaMk: 'Matematika' },
                     dosen: { name: 'Dr. John Doe' },
@@ -215,7 +215,7 @@ describe('JadwalService', () => {
             const expectedResult = {
                 id: 1,
                 hari: 'Senin',
-                jamMulai: new Date('2025-09-21T08:00:00.000Z'),
+                jamMulai: '08:00',
                 jamSelesai: new Date('2025-09-21T10:00:00.000Z'),
                 mataKuliah: { namaMk: 'Matematika' },
                 dosen: { name: 'Dr. John Doe' },
@@ -253,7 +253,7 @@ describe('JadwalService', () => {
             const existingJadwal = {
                 id: 1,
                 hari: 'Senin',
-                jamMulai: new Date('2025-09-21T08:00:00.000Z'),
+                jamMulai: '08:00',
                 jamSelesai: new Date('2025-09-21T10:00:00.000Z'),
                 mataKuliah: { namaMk: 'Matematika' },
                 dosen: { name: 'Dr. John Doe' },
@@ -297,7 +297,7 @@ describe('JadwalService', () => {
             const existingJadwal = {
                 id: 1,
                 hari: 'Senin',
-                jamMulai: new Date('2025-09-21T08:00:00.000Z'),
+                jamMulai: '08:00',
                 jamSelesai: new Date('2025-09-21T10:00:00.000Z'),
                 mataKuliah: { namaMk: 'Matematika' },
                 dosen: { name: 'Dr. John Doe' },

@@ -72,8 +72,8 @@ model Ruangan {
 model Jadwal {
   id           Int        @id @default(autoincrement())
   hari         String
-  jamMulai     DateTime
-  jamSelesai   DateTime
+  jamMulai     String
+  jamSelesai   String
   status       String     @default("aktif")
 
   mataKuliah   MataKuliah @relation(fields: [mataKuliahId], references: [id])

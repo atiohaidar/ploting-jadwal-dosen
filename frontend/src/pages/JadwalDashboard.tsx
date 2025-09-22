@@ -118,6 +118,7 @@ const JadwalDashboard: React.FC = () => {
 
     const handleJadwalClick = (jadwal: Jadwal) => {
         setSelectedJadwalForStats(jadwal);
+        handleEditJadwal(jadwal);
     };
 
     const handleCreateJadwal = (date?: Date, timeSlot?: string) => {
@@ -144,6 +145,16 @@ const JadwalDashboard: React.FC = () => {
             setJadwalList(jadwalList.filter(j => j.id !== jadwal.id));
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to delete jadwal');
+        }
+    };
+
+    const handleUpdateJadwal = async (jadwalId: number, updateData: { hari: string; jamMulai: string; jamSelesai: string }) => {
+        try {
+            const updatedJadwal = await jadwalAPI.update(jadwalId, updateData);
+            setJadwalList(jadwalList.map(j => j.id === jadwalId ? updatedJadwal : j));
+            setFilteredJadwal(filteredJadwal.map(j => j.id === jadwalId ? updatedJadwal : j));
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to update jadwal');
         }
     };
 
@@ -280,6 +291,7 @@ const JadwalDashboard: React.FC = () => {
                             onJadwalClick={handleJadwalClick}
                             onCreateJadwal={handleCreateJadwal}
                             onDragCreateJadwal={handleDragCreateJadwal}
+                            onUpdateJadwal={handleUpdateJadwal}
                         />
                     </div>
 
@@ -314,13 +326,7 @@ const JadwalDashboard: React.FC = () => {
                                                     {jadwal.hari}
                                                 </div>
                                                 <div className="text-sm text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                                                    {(() => {
-                                                        const startTime = new Date(jadwal.jamMulai);
-                                                        const endTime = new Date(jadwal.jamSelesai);
-                                                        const startStr = `${startTime.getUTCHours().toString().padStart(2, '0')}:${startTime.getUTCMinutes().toString().padStart(2, '0')}`;
-                                                        const endStr = `${endTime.getUTCHours().toString().padStart(2, '0')}:${endTime.getUTCMinutes().toString().padStart(2, '0')}`;
-                                                        return `${startStr} - ${endStr}`;
-                                                    })()}
+                                                    {jadwal.jamMulai} - {jadwal.jamSelesai}
                                                 </div>
                                             </div>
                                             <div className="mt-2 text-sm text-[#656565]" style={{ fontFamily: "'Inter', sans-serif" }}>

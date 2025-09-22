@@ -31,8 +31,8 @@ const JadwalForm: React.FC<JadwalFormProps> = ({
 }) => {
     const [formData, setFormData] = useState<CreateJadwalDto | UpdateJadwalDto>({
         hari: jadwal?.hari || dragData?.hari || 'Senin',
-        jamMulai: jadwal ? new Date(jadwal.jamMulai).toTimeString().slice(0, 5) : dragData?.jamMulai || '08:00',
-        jamSelesai: jadwal ? new Date(jadwal.jamSelesai).toTimeString().slice(0, 5) : dragData?.jamSelesai || '10:00',
+        jamMulai: jadwal?.jamMulai || dragData?.jamMulai || '08:00',
+        jamSelesai: jadwal?.jamSelesai || dragData?.jamSelesai || '10:00',
         mataKuliahId: jadwal?.mataKuliahId || prefilledFilters?.mataKuliah?.id || 0,
         dosenId: jadwal?.dosenId || prefilledFilters?.dosen?.id || 0,
         kelasId: jadwal?.kelasId || prefilledFilters?.kelas?.id || 0,
@@ -62,15 +62,8 @@ const JadwalForm: React.FC<JadwalFormProps> = ({
         setError('');
 
         try {
-            // Convert time strings to full ISO strings
-            const today = new Date().toISOString().split('T')[0];
-            const jamMulai = new Date(`${today}T${formData.jamMulai}:00.000Z`);
-            const jamSelesai = new Date(`${today}T${formData.jamSelesai}:00.000Z`);
-
             const submitData = {
                 ...formData,
-                jamMulai: jamMulai.toISOString(),
-                jamSelesai: jamSelesai.toISOString(),
             };
 
             if (jadwal) {

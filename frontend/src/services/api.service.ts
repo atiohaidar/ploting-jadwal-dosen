@@ -10,16 +10,6 @@ const api = axios.create({
     },
 });
 
-export interface CreateJadwalDto {
-    hari: string;
-    jamMulai: string;
-    jamSelesai: string;
-    mataKuliahId: number;
-    dosenId: number;
-    kelasId: number;
-    ruanganId: number;
-}
-
 export interface UpdateJadwalDto {
     hari?: string;
     jamMulai?: string;
@@ -114,8 +104,8 @@ export interface Ruangan {
 export interface Jadwal {
     id: number;
     hari: string;
-    jamMulai: Date;
-    jamSelesai: Date;
+    jamMulai: string;
+    jamSelesai: string;
     status: string;
     mataKuliahId: number;
     dosenId: number;
@@ -377,7 +367,7 @@ export const jadwalAPI = {
     },
 
     update: async (id: number, jadwalData: UpdateJadwalDto): Promise<Jadwal> => {
-        const response = await api.put(`/jadwal/${id}`, jadwalData);
+        const response = await api.patch(`/jadwal/${id}`, jadwalData);
         return response.data;
     },
 
