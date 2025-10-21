@@ -23,12 +23,37 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API Backend for Plotting Jadwal Dosen (Lecturer Schedule Management System) built with [Nest](https://github.com/nestjs/nest) framework.
+
+## Features
+
+- **Authentication**: JWT-based authentication with login endpoint
+- **User Management**: CRUD operations for users with role-based access (ADMIN, DOSEN, MAHASISWA, KAPRODI)
+- **Program Studi (Prodi)**: Manage study programs
+- **Mata Kuliah**: Manage courses
+- **Kelas**: Manage classes
+- **Ruangan**: Manage rooms
+- **Jadwal**: Manage schedules
+- **Monitoring**: Health checks and metrics
 
 ## Project setup
 
 ```bash
+# Install dependencies
 $ npm install
+
+# Setup environment variables
+$ cp .env.example .env
+# Edit .env and configure your DATABASE_URL and JWT_SECRET
+
+# Generate Prisma client
+$ npx prisma generate
+
+# Run database migrations
+$ npx prisma migrate deploy
+
+# Seed database with sample data
+$ npm run seed
 ```
 
 ## Compile and run the project
@@ -56,6 +81,20 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Default Login Credentials
+
+After running the seed script, you can use the following credentials:
+
+- **Admin**: admin@university.ac.id / password123
+- **Kaprodi TI**: kaprodi.ti@university.ac.id / password123
+- **Kaprodi SI**: kaprodi.si@university.ac.id / password123
+- **All other users**: [email] / password123
+
+## API Documentation
+
+Once the server is running, you can access the Swagger API documentation at:
+- http://localhost:3001/api
 
 ## Monitoring and Observability
 
