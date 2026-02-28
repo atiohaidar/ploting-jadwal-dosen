@@ -90,10 +90,20 @@ export class JadwalService {
 
     async update(id: number, updateJadwalDto: UpdateJadwalDto) {
         // Check if jadwal exists
-        await this.findOne(id);
+        const existingJadwal = await this.findOne(id);
+
+        // Merge existing data with update data for conflict checking
+        const mergedData = {
+            hari: updateJadwalDto.hari || existingJadwal.hari,
+            jamMulai: updateJadwalDto.jamMulai || existingJadwal.jamMulai,
+            jamSelesai: updateJadwalDto.jamSelesai || existingJadwal.jamSelesai,
+            dosenId: updateJadwalDto.dosenId || existingJadwal.dosenId,
+            kelasId: updateJadwalDto.kelasId || existingJadwal.kelasId,
+            ruanganId: updateJadwalDto.ruanganId || existingJadwal.ruanganId,
+        };
 
         // Check for conflicts before updating
-        // await this.checkConflicts(updateJadwalDto, id);
+        await this.checkConflicts(mergedData as CreateJadwalDto, id);
 
         return this.prisma.jadwal.update({
             where: { id },
@@ -231,6 +241,57 @@ export class JadwalService {
         kelasConflicts.forEach(conflict => {
             conflicts.push({
                 type: 'KELAS',
+                existingJadwal: {
+                    id: conflict.id,
+                    hari: conflict.hari,
+                    jamMulai: this.formatTimeString(conflict.jamMulai),
+                    jamSelesai: this.formatTimeString(conflict.jamSelesai),
+                    mataKuliah: conflict.mataKuliah,
+                    dosen: conflict.dosen,
+                    kelas: conflict.kelas,
+                    ruangan: conflict.ruangan,
+                },
+            });
+        });
+
+        // Check for ruangan (room) conflict
+        const ruanganConflicts = await this.prisma.jadwal.findMany({
+            where: {
+                ruanganId: jadwalData.ruanganId,
+                hari: hari,
+                OR: [
+                    {
+                        AND: [
+                            { jamMulai: { lte: jamMulai } },
+                            { jamSelesai: { gt: jamMulai } }
+                        ]
+                    },
+                    {
+                        AND: [
+                            { jamMulai: { lt: jamSelesai } },
+                            { jamSelesai: { gte: jamSelesai } }
+                        ]
+                    },
+                    {
+                        AND: [
+                            { jamMulai: { gte: jamMulai } },
+                            { jamSelesai: { lte: jamSelesai } }
+                        ]
+                    }
+                ],
+                ...(excludeId && { id: { not: excludeId } })
+            },
+            include: {
+                mataKuliah: { select: { namaMk: true } },
+                dosen: { select: { name: true } },
+                kelas: { select: { namaKelas: true } },
+                ruangan: { select: { nama: true } },
+            },
+        });
+
+        ruanganConflicts.forEach(conflict => {
+            conflicts.push({
+                type: 'RUANGAN',
                 existingJadwal: {
                     id: conflict.id,
                     hari: conflict.hari,

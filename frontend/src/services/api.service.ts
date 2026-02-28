@@ -1,24 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://127.0.0.1:3000'; // Adjust this to match your backend URL
+const API_BASE_URL = 'http://127.0.0.1:3001'; // Adjust this to match your backend URL
 
 // Create axios instance with default config
 const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-export interface UpdateJadwalDto {
-    hari?: string;
-    jamMulai?: string;
-    jamSelesai?: string;
-    mataKuliahId?: number;
-    dosenId?: number;
-    kelasId?: number;
-    ruanganId?: number;
-} axios.create({
     baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
