@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ruanganAPI, Ruangan } from '../services/api.service';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,6 +8,7 @@ const RuanganDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const { logout } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchRuangan();
@@ -58,14 +60,14 @@ const RuanganDashboard: React.FC = () => {
                         <h1 className="text-3xl font-bold text-[#BFFF00]" style={{ fontFamily: "'Poppins', sans-serif" }}>Ruangan Management</h1>
                         <div className="flex space-x-4">
                             <button
-                                onClick={() => window.location.href = '/ruangan/create'}
+                                onClick={() => navigate('/ruangan/create')}
                                 className="bg-[#BFFF00] text-[#222222] font-semibold px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
                                 style={{ fontFamily: "'Poppins', sans-serif" }}
                             >
                                 Add Ruangan
                             </button>
                             <button
-                                onClick={() => window.location.href = '/dashboard'}
+                                onClick={() => navigate('/dashboard')}
                                 className="bg-[#656565] text-[#AAAAAA] font-semibold px-4 py-2 rounded-md hover:bg-[#525252] transition-colors"
                                 style={{ fontFamily: "'Poppins', sans-serif" }}
                             >
@@ -120,7 +122,7 @@ const RuanganDashboard: React.FC = () => {
                                         </div>
                                         <div className="flex space-x-2">
                                             <button
-                                                onClick={() => window.location.href = `/ruangan/edit/${r.id}`}
+                                                onClick={() => navigate(`/ruangan/edit/${r.id}`)}
                                                 className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-sm"
                                                 style={{ fontFamily: "'Inter', sans-serif" }}
                                             >

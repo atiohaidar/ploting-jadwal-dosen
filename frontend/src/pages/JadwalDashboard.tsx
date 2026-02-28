@@ -39,7 +39,8 @@ const JadwalDashboard: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [editingJadwal, setEditingJadwal] = useState<Jadwal>();
     const [selectedJadwalForStats, setSelectedJadwalForStats] = useState<Jadwal>();
-    const [dragData, setDragData] = useState<{ hari: string; jamMulai: string; jamSelesai: string } | undefined>(); const { logout } = useAuth();
+    const [dragData, setDragData] = useState<{ hari: string; jamMulai: string; jamSelesai: string } | undefined>();
+    const { logout } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -130,7 +131,9 @@ const JadwalDashboard: React.FC = () => {
         setDragData(dragDataParam);
         setEditingJadwal(undefined);
         setShowForm(true);
-    }; const handleEditJadwal = (jadwal: Jadwal) => {
+    };
+
+    const handleEditJadwal = (jadwal: Jadwal) => {
         setEditingJadwal(jadwal);
         setShowForm(true);
     };
@@ -169,7 +172,9 @@ const JadwalDashboard: React.FC = () => {
         setShowForm(false);
         setEditingJadwal(undefined);
         setDragData(undefined);
-    }; const handleLogout = () => {
+    };
+
+    const handleLogout = () => {
         logout();
     };
 
