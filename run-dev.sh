@@ -110,7 +110,7 @@ print_status "Frontend started with PID: $FRONTEND_PID"
 echo
 
 print_status "Development servers are running!"
-echo -e "${BLUE}Backend:${NC} http://localhost:3000 (or check console output for exact port)"
+echo -e "${BLUE}Backend:${NC} http://localhost:3001"
 echo -e "${BLUE}Frontend:${NC} http://localhost:5173"
 echo
 print_warning "Press Ctrl+C to stop all services"

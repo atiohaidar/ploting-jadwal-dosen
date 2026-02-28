@@ -29,7 +29,7 @@ cd /workspaces/ploting-jadwal-dosen
 ## URLs
 
 - **Frontend**: http://localhost:5173
-- **Backend**: http://localhost:3000 (check console output for exact port)
+- **Backend**: http://localhost:3001
 
 ## Stopping Services
 
